@@ -7,6 +7,13 @@ import os
 # 環境変数の読み込み
 load_dotenv("stream.env")
 
+# OpenAI APIキーの設定を確認
+# Streamlit Cloudではst.secretsから、ローカルでは環境変数から読み込む
+if "OPENAI_API_KEY" in st.secrets:
+    openai_api_key = st.secrets["OPENAI_API_KEY"]
+else:
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+
 def get_llm_response(user_input: str, expert_type: str) -> str:
     """
     LLMから回答を取得する関数
@@ -26,8 +33,12 @@ def get_llm_response(user_input: str, expert_type: str) -> str:
         "教育カウンセラー": "あなたは教育分野の専門家・カウンセラーです。学習方法、教育に関する悩み、キャリアパスについて、親身になって丁寧にアドバイスしてください。"
     }
     
-    # LLMモデルの初期化
-    llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7)
+    # LLMモデルの初期化（APIキーを明示的に渡す）
+    llm = ChatOpenAI(
+        model="gpt-3.5-turbo", 
+        temperature=0.7,
+        api_key=openai_api_key
+    )
     
     # メッセージの作成
     messages = [
