@@ -14,6 +14,21 @@ if "OPENAI_API_KEY" in st.secrets:
 else:
     openai_api_key = os.getenv("OPENAI_API_KEY")
 
+# APIキーが設定されていない場合のエラーチェック
+if not openai_api_key:
+    st.error("⚠️ OpenAI APIキーが設定されていません")
+    st.info("""
+    **ローカル環境の場合:**
+    - `stream.env`ファイルに`OPENAI_API_KEY=your-api-key`を記述してください
+    
+    **Streamlit Cloudの場合:**
+    - アプリ設定の「Settings」→「Secrets」で以下を設定してください:
+    ```
+    OPENAI_API_KEY = "your-api-key"
+    ```
+    """)
+    st.stop()
+
 def get_llm_response(user_input: str, expert_type: str) -> str:
     """
     LLMから回答を取得する関数
